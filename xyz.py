@@ -35,7 +35,11 @@ import zlib
 
 
 def ziptime2utc(in_bytes):
-    return datetime.datetime.utcfromtimestamp(struct.unpack("<I", in_bytes)[0]).isoformat()
+    try:
+        return datetime.datetime.fromtimestamp(struct.unpack("<I", in_bytes)[0], datetime.UTC)
+    except AttributeError:
+        # python2
+        return datetime.datetime.utcfromtimestamp(struct.unpack("<I", in_bytes)[0]).isoformat()
 
 '''
    4.4.5 compression method: (2 bytes)
