@@ -33,6 +33,10 @@ import argparse
 import traceback
 import zlib
 
+
+def ziptime2utc(in_bytes):
+    return datetime.datetime.utcfromtimestamp(struct.unpack("<I", in_bytes)[0]).isoformat()
+
 '''
    4.4.5 compression method: (2 bytes)
 
@@ -740,15 +744,15 @@ def parse_extra_data(data, type):
             tokens.append((binascii.hexlify(data[0:1])))
             if len(ts_types) >= 1:
                 #fields["time_" + ts_types[0]] = datetime.datetime.utcfromtimestamp(struct.unpack("<I",data[1:5])[0]).isoformat()
-                tuples.append(("time_" + ts_types[0],datetime.datetime.utcfromtimestamp(struct.unpack("<I",data[1:5])[0]).isoformat()))
+                tuples.append(("time_" + ts_types[0],ziptime2utc(data[1:5])))  # FIXME this data range is duplicated below
                 tokens.append((binascii.hexlify(data[1:5])))
             if data_len >= 9 and len(ts_types) >= 2:
                 #fields["time_" + ts_types[1]] = datetime.datetime.utcfromtimestamp(struct.unpack("<I",data[5:9])[0]).isoformat()    
-                tuples.append(("time_" + ts_types[1], datetime.datetime.utcfromtimestamp(struct.unpack("<I",data[5:9])[0]).isoformat()))
+                tuples.append(("time_" + ts_types[1],ziptime2utc(data[5:9])))  # FIXME this data range is duplicated below
                 tokens.append((binascii.hexlify(data[5:9])))
             if data_len >= 13 and len(ts_types) >= 3:
                 #fields["time_" + ts_types[2]] = datetime.datetime.utcfromtimestamp(struct.unpack("<I",data[9:13])[0]).isoformat()
-                tuples.append(("time_" + ts_types[2], datetime.datetime.utcfromtimestamp(struct.unpack("<I",data[9:13])[0]).isoformat()))
+                tuples.append(("time_" + ts_types[2],ziptime2utc(data[9:13])))  # FIXME this data range is duplicated below
                 tokens.append((binascii.hexlify(data[9:13])))
     if type == "7875":
         if data_len >= 6 and data[0] == b"\x01":
