@@ -1291,7 +1291,7 @@ def main():
     
     for filename in args.filename:
         try:
-            with open(filename, "r") as f:
+            with open(filename, "rb") as f:
                 archive = parse_zip(f, decompress_files=args.decompress, derive_deflate_level=args.deflate)
                 
                 archive['filename'] = filename    
